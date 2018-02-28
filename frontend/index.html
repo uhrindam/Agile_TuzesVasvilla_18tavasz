@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>CryptoTrade</title>
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" rel="stylesheet" type="text/css" />
+    <link href="https://fonts.googleapis.com/css?family=Lato:300,400,700" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/ionicons/4.0.0-4/css/ionicons.min.css" rel="stylesheet" type="text/css" />
+    <link href="./main.css" rel="stylesheet" type="text/css" />
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+
+<body>
+    <div class="container-fluid">
+        <div class="sidenav">
+            <img src="./res/profile.jpg" class="img-rounded">
+            <div class="flex-center">
+                <h4>Sipos Gergő</h4>
+            </div>
+            <div class="flex-center">
+                <h3>$5000</h3>
+            </div>
+            <div class="flex-center">
+                <button type="button" class="btn btn-danger">Reset</button>
+            </div>
+
+            <div class="button-down">
+                <button type="button" class="btn btn-danger">Log out</button>
+            </div>
+
+        </div>
+
+
+        <div class="main">
+
+            <div class="row">
+
+                <div class="col-md">
+                    <div class="card card-margin">
+                        <div class="card-header">
+                            My Account
+                        </div>
+                        <div class="card-body">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <td>Currency</td>
+                                        <td>Amount</td>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>Bitcoin</td>
+                                        <td>100</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Ethereum</td>
+                                        <td>50</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Ripple</td>
+                                        <td>10</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md">
+
+                    <div class="card card-margin">
+                        <div class="card-header">
+                            Trade
+                        </div>
+                        <div class="card-body">
+                            <div class="content row">
+                                <div class="form-group col-md-12">
+                                    <label for="currency">Currency: </label>
+                                    <select class="form-control" id="currency">
+                                        <option>Bitcoin</option>
+                                        <option>Ethereum</option>
+                                        <option>Ripple</option>
+                                    </select>
+                                </div>
+                                <div class="form-group  col-md-12">
+                                    <label for="amount">Amount: </label>
+                                    <input class="form-control" id="amount" type="text">
+                                </div>
+                                <div class="flex-center">
+                                    <div>
+                                        <button type="button" class="btn btn-success">Buy</button>
+                                    </div>
+                                    <div>
+                                        <button type="button" class="btn btn-danger">Sell</button>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md">
+                    <div class="card card-margin">
+                        <div class="card-header">
+                            Tendency
+                        </div>
+                        <div class="card-body">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <td>Currency</td>
+                                        <td>Change</td>
+                                        <td>Tendency</td>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>Bitcoin</td>
+                                        <td>+ 0,6%</td>
+                                        <td><i class="ion-md-trending-up trend-up"></i></td> 
+                                    </tr>
+                                    <tr>
+                                        <td>Ethereum</td>
+                                        <td>- 2,0%</td>
+                                        <td><i class="ion-md-trending-down trend-down"></i></td> 
+                                    </tr>
+                                    <tr>
+                                        <td>Ripple</td>
+                                        <td>+ 0%</td>
+                                        <td><i class="ion-md-arrow-dropright trend-stag"></i></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-12">
+
+                    <div class="card card-margin">
+                        <div class="card-header">
+                            Exchange Rate
+                        </div>
+                        <div class="card-body">
+                            <img src="./res/chart.jpg" class="img-fluid" />
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+
+
+        </div>
+    </div>
+</body>
+
+</html>

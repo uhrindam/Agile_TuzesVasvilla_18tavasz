@@ -1,0 +1,98 @@
+/* The sidebar menu */
+
+.sidenav {
+    height: 100%;
+    width: 220px;
+    position: fixed;
+    z-index: 1;
+    top: 0;
+    left: 0;
+    background-color: rgb(204, 230, 255);
+    overflow-x: hidden;
+    padding-top: 10px;
+    transition: ease 1s;
+    border-right: solid 2px rgb(142, 200, 255);
+    ;
+}
+
+thead {
+    font-weight: 700;
+}
+
+inline {
+    display: inline;
+}
+
+body {
+    min-height: 2000px;
+    font-family: 'Lato', sans-serif;
+}
+
+.main {
+    margin-top: 10px;
+    margin-left: 220px;
+    padding-left: 10px;
+    z-index: 2;
+}
+
+.img-rounded {
+    border-radius: 100%;
+    max-width: 60%;
+    max-height: 60%;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.flex-center {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+}
+
+.btn {
+    margin: 5px;
+}
+
+.card-body {
+    min-width: 200px;
+}
+
+.button-down {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    bottom: 2%;
+}
+
+.card-margin {
+    margin-bottom: 10px;
+}
+
+.trend-up {
+    color: green;
+}
+
+.trend-down {
+    color: red;
+}
+
+.trend-stag {
+    color: orange;
+}
+
+i {
+    font-size: 200%;
+}
+
+/* On smaller screens, where height is less than 450px, change the style of the sidebar (less padding and a smaller font size) */
+
+@media screen and (max-width: 600px) {
+    .sidenav {
+        left: -220px;
+        transition: ease 1s;
+    }
+    .main {
+        margin-left: 0px;
+    }
+}
