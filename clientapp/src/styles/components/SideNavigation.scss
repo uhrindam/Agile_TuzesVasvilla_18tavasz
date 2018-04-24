@@ -1,0 +1,39 @@
+.sidenav {
+    height: 100%;
+    width: 220px;
+    position: fixed;
+    z-index: 1;
+    top: 0;
+    left: 0;
+    background-color: rgb(204, 230, 255);
+    overflow-x: hidden;
+    padding-top: 10px;
+    transition: ease 1s;
+    border-right: solid 2px rgb(142, 200, 255);
+}
+
+.button-down {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    bottom: 2%;
+}
+
+.img-rounded {
+    border-radius: 100%;
+    max-width: 60%;
+    max-height: 60%;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+@media screen and (max-width: 600px) {
+    .sidenav {
+        left: -220px;
+        transition: ease 1s;
+    }
+    .main {
+        margin-left: 0px;
+    }
+}
