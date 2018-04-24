@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import { currencies } from "../Constants";
-import { buyCrypto } from "../Services";
+import { buyCrypto, sellCrypto } from "../Services";
 import { NotificationContainer, NotificationManager } from 'react-notifications';
 
 
@@ -31,6 +31,13 @@ class Trade extends React.Component {
             .catch(error => { NotificationManager.error(error, 'Error'); });
     }
 
+    onSell = (e) => {
+        e.preventDefault();
+        sellCrypto({ Amount: this.state.amount, Symbol: this.state.symbol })
+            .then(() => { this.props.refreshBalance();  NotificationManager.success("Transaction succeded", 'Success'); })
+            .catch(error => { NotificationManager.error(error, 'Error'); });
+    }
+
 
 
     render() {
@@ -55,7 +62,7 @@ class Trade extends React.Component {
                         <button onClick={this.onBuy} type="button" className="btn btn-success">Buy</button>
                     </div>
                     <div>
-                        <button type="button" className="btn btn-danger">Sell</button>
+                        <button type="button" onClick={this.onSell} className="btn btn-danger">Sell</button>
                     </div>
                 </div>
 

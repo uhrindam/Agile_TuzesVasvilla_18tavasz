@@ -26,6 +26,16 @@ export function buyCrypto(body) {
     return fetch(API_URL + "account/purchase", requestOptions).then(handleResponse, handleError);
 }
 
+export function sellCrypto(body) {
+    const json_content = { "Content-Type": 'application/json' };
+    const requestOptions = {
+        method: 'POST',
+        headers: { ...authHeader(), ...json_content },
+        body: JSON.stringify(body)
+    }; console.log(requestOptions)
+    return fetch(API_URL + "account/sell", requestOptions).then(handleResponse, handleError);
+}
+
 export function reset() {
     const requestOptions = {
         method: 'POST',
