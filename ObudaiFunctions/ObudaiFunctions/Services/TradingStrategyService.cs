@@ -18,20 +18,24 @@ namespace ObudaiFunctions.Services
 
         private static void Convert()
         {
-            string path = string.Empty;
-            var exePath = System.Reflection.Assembly.GetEntryAssembly().Location.Split('\\');
-            for (int i = 0; i < exePath.Length - 3; i++)
+            //string path = string.Empty;
+            //var exePath = System.Reflection.Assembly.GetEntryAssembly().Location.Split('\\');
+            //for (int i = 0; i < exePath.Length - 3; i++)
+            //{
+            //    path += exePath[i] + '\\';
+            //}
+
+
+            //StreamReader sr = new StreamReader(path + teamAPIName);
+            //var c = sr.ReadToEnd();
+
+            //dynamic api = JsonConvert.DeserializeObject<dynamic>(c);
+            //var id = api.item;
+            int a = 0;
+            for (int i = 0; i < 1000; i++)
             {
-                path += exePath[i] + '\\';
+                a += i * 3; 
             }
-
-
-            StreamReader sr = new StreamReader(path + teamAPIName);
-            var c = sr.ReadToEnd();
-
-            dynamic api = JsonConvert.DeserializeObject<dynamic>(c);
-            var id = api.item;
-
         }
     }
 }
