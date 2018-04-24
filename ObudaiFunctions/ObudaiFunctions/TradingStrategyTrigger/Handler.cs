@@ -11,7 +11,7 @@ namespace ObudaiFunctions.TradingStrategyTrigger
         public static void Run([TimerTrigger("0 */5 * * * *")]TimerInfo myTimer, TraceWriter log)
         {
             log.Info("TradingStrategyTrigger invoked");
-            TradingStrategyService.Trade();
+            TradingStrategyService.Trade(log);
         }
     }
 }

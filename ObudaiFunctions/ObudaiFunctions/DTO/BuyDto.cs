@@ -6,8 +6,9 @@ using System.Threading.Tasks;
 
 namespace ObudaiFunctions.DTO
 {
-    class userDTO
+    class BuyDto
     {
-
+        public string Symbol { get; set; }
+        public double Amount { get; set; }
     }
 }
