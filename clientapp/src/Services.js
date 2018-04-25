@@ -16,24 +16,17 @@ export function fetchBalance() {
     return fetch(API_URL + "account", requestOptions).then(handleResponse, handleError);
 }
 
-export function buyCrypto(body) {
+export function transaction(body, type) {
     const json_content = { "Content-Type": 'application/json' };
     const requestOptions = {
         method: 'POST',
         headers: { ...authHeader(), ...json_content },
         body: JSON.stringify(body)
-    }; console.log(requestOptions)
-    return fetch(API_URL + "account/purchase", requestOptions).then(handleResponse, handleError);
-}
-
-export function sellCrypto(body) {
-    const json_content = { "Content-Type": 'application/json' };
-    const requestOptions = {
-        method: 'POST',
-        headers: { ...authHeader(), ...json_content },
-        body: JSON.stringify(body)
-    }; console.log(requestOptions)
-    return fetch(API_URL + "account/sell", requestOptions).then(handleResponse, handleError);
+    };
+    let url =  API_URL + "account/";
+    url += type === "buy" ? "purchase" : "sell"; 
+    console.log(url);
+    return fetch(url, requestOptions).then(handleResponse, handleError);
 }
 
 export function reset() {
