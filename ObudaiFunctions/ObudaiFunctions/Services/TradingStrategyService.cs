@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Azure.WebJobs.Host;
 using Newtonsoft.Json;
+using System.Xml.Serialization;
 using ObudaiFunctions.DTO;
 
 namespace ObudaiFunctions.Services
@@ -15,22 +16,36 @@ namespace ObudaiFunctions.Services
         static TraceWriter logger;
         const string SECRET_KEY = "8422F77A-866B-4665-B069-DD69AE3D0D23";
         const string API_URL = "https://obudai-api.azurewebsites.net/api/";
-        static Dictionary<string, ExchangeRateDto> exchangeRates = new Dictionary<string, ExchangeRateDto>();
-        const int howManyHistoricalDataIsOnTheTable = 50;
+        const int howManyHistoricalDataIsOnTheTable = 10;
+        const double allowedDifferentePrecent = 0.015;
 
-        static Dictionary<string, string> currencies =
-            new Dictionary<string, string>
+        static Dictionary<string, double> exchangeRatesAverage = new Dictionary<string, double>
+        {
+                { "BTC", 9400 },
+                { "ETH", 700 },
+                { "XRP", 0.86 }
+        };
+
+        static Dictionary<string, string> currencies = new Dictionary<string, string>
             {
                 { "BTC", "Bitcoin" },
                 { "ETH", "Ethereum" },
                 { "XRP", "Ripple" }
             };
 
+        //úgy vannak belőve az értékek, hogy 250 dollárból mennyit tudnánk venni
+        static Dictionary<string, double> referenceExchangeValue = new Dictionary<string, double>
+        {
+                { "BTC", 0.025 },
+                { "ETH", 0.375 },
+                { "XRP", 288 }
+        };
+
         public static void Trade(TraceWriter log)
         {
             logger = log;
-            exchangeRates = getExchangeRates();
-            Strategy();
+            Dictionary<string, ExchangeRateDto> exchangeRates = getExchangeRates();
+            Strategy(exchangeRates);
         }
 
         static async Task<string> getBalance()
@@ -99,28 +114,118 @@ namespace ObudaiFunctions.Services
             return JsonConvert.DeserializeObject<BalanceDto>(getBalance().Result);
         }
 
+        private static double calculateQuantity(string currency, Dictionary<string, double> exchangeRate)
+        {
+            List<double> exchangeRates = createListFromHistoryDatas(exchangeRate);
+            double reference = referenceExchangeValue[currency];
+            double quantity = reference;
+            double historicalCorrectionRate = 0.01 * reference; //minden megelőző 5 perc változása 1%-ban érinti a vásárolt mennyiséget
+
+            //azért megy exchangeRates.Count-1-ig mert az i. elemet a következővel hasonlítjuk össze
+            for (int i = 0; i < exchangeRates.Count-1; i++)
+            {
+                quantity+= (exchangeRates[i + 1] - exchangeRates[i]) * historicalCorrectionRate;
+            }
+
+            return quantity;
+        }
+
+
+
         /// <summary>
-        /// Shows the direction of the exchanging rate.
+        /// 
         /// </summary>
-        /// <returns>true if the direction is upwarding, else return false</returns>
-        private static bool directionOfAnExchangeRate(string currency)
+        /// <param name="currency"></param>
+        /// <param name="CurrentRate"></param>
+        /// <param name="correction">Korrekció ahhoz hogy közelebb legyen az eddigi értékhez</param>
+        /// <param name="exchangeRate"></param>
+        private static void calculateNeweExchangeRatesAverage(string currency, double CurrentRate, double correction)
         {
-            //Eznemjó----------------------------------------------------------
-            double[] relevantExchangeDatas = new double[exchangeRates[currency].History.Values.Count];
-            //List<double> relevantExchangeDatas = new List<double>();
-            exchangeRates[currency].History.Values.CopyTo(relevantExchangeDatas, 0);
-
-            return false;
+            double result = (exchangeRatesAverage[currency] * correction + CurrentRate) / 2;
+            double forTheLogger = exchangeRatesAverage[currency];
+            exchangeRatesAverage[currency] = result;
+            logger.Info("The new exchange rate average of " + currency + " currency is changed from " + forTheLogger + " to " + result);
         }
 
-        private static void Strategy()
+        private static List<double> createListFromHistoryDatas(Dictionary<string, double> exchangeRate)
         {
-            BalanceDto jsonBalance = getBalanceDTO();
-            if(jsonBalance.usd>0)
-                logger.Info(buyCurrency("ETH", 0.1).Result + " when invoked buyCurrency method");
-            if(jsonBalance.eth > 0.1)
-                logger.Info(sellCurrency("ETH", 0.1).Result + " when invoked sellCurrency method");
+            List<double> HistoricalExchangeRatates = new List<double>();
+            int i = 0;
+            foreach (var item in exchangeRate)
+            {
+                HistoricalExchangeRatates.Add(item.Value);
+                if (i == howManyHistoricalDataIsOnTheTable)
+                    break;
+                i++;
+            }
+            return HistoricalExchangeRatates;
         }
 
+        private static void SellStrategy(ExchangeRateDto dto, Dictionary<string, double> currencyBalances, BalanceDto balance)
+        {
+            if (currencyBalances[dto.Symbol] > 0 &&
+                    dto.CurrentRate * 1 + allowedDifferentePrecent > exchangeRatesAverage[dto.Symbol])
+            {
+                double quantity = calculateQuantity(dto.Symbol, dto.History);
+                double forTheLogger = quantity;
+                if (quantity > currencyBalances[dto.Symbol])
+                {
+                    quantity = currencyBalances[dto.Symbol];
+                    logger.Info("The recommended quantity for sell " + dto.Symbol +" was " + forTheLogger + ", but we didn't have enough currency. The new quantity is " + quantity
+                        + " which is costs " + quantity * dto.CurrentRate + " usd.");
+                }
+                else
+                {
+                    logger.Info("The calculated quantity for sell " + dto.Symbol + " is " + quantity + ", which is costs " + quantity * dto.CurrentRate + " usd.");
+                }
+
+                logger.Info(sellCurrency(dto.Symbol, quantity).Result + " when invoked sellCurrency method with "
+                    + dto.Symbol + " currency and " + quantity + " piece parameters");
+                balance.usd += quantity * dto.CurrentRate;
+                calculateNeweExchangeRatesAverage(dto.Symbol, dto.CurrentRate, 1 + allowedDifferentePrecent);
+            }
+        }
+
+        private static void BuyStrategy(ExchangeRateDto dto, Dictionary<string, double> currencyBalances, BalanceDto balance)
+        {
+            if (balance.usd > 0 && dto.CurrentRate * 1 - allowedDifferentePrecent < exchangeRatesAverage[dto.Symbol])
+            {
+                double quantity = calculateQuantity(dto.Symbol, dto.History);
+                double forTheLogger = quantity;
+                if (quantity * dto.CurrentRate > balance.usd)
+                {
+                    quantity = balance.usd / dto.CurrentRate;
+                    logger.Info("The recommended quantity for buy " + dto.Symbol + " was " + forTheLogger + ", but we didn't have enough money for that. The new quantity is " + quantity
+                        + " which is costs " + quantity * dto.CurrentRate + " usd.");
+                }
+                else
+                {
+                    logger.Info("The calculated quantity for buy " + dto.Symbol + " is " + quantity + ", which is costs " + quantity * dto.CurrentRate + " usd.");
+                }
+
+                logger.Info(buyCurrency(dto.Symbol, quantity).Result + " when invoked buyCurrency method with "
+                        + dto.Symbol + " currency and " + quantity + " quantity parameters");
+                balance.usd -= quantity * dto.CurrentRate;
+                calculateNeweExchangeRatesAverage(dto.Symbol, dto.CurrentRate, 1 - allowedDifferentePrecent);
+            }
+        }
+
+        private static void Strategy(Dictionary<string, ExchangeRateDto> exchangeRates)
+        {
+            BalanceDto balance = getBalanceDTO();
+            Dictionary<string, double> currencyBalances = new Dictionary<string, double>
+            {
+                { "BTC", balance.btc},
+                { "ETH", balance.eth},
+                { "XRP", balance.xrp}
+            };
+
+            foreach (var item in exchangeRates)
+            {
+                ExchangeRateDto dto = item.Value;
+                SellStrategy(dto, currencyBalances, balance);
+                BuyStrategy(dto, currencyBalances, balance);
+            }
+        }
     }
 }
