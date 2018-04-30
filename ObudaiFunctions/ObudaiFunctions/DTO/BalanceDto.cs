@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace ObudaiFunctions.DTO
 {
-    class BalanceDto
+    public class BalanceDto
     {
         public string Token { get; set; }
         public double usd { get; set; }

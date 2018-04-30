@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace ObudaiFunctions.DTO
 {
-    class ExchangeRateDto
+    public class ExchangeRateDto
     {
         public string Symbol { get; set; }
         public double CurrentRate { get; set; }
