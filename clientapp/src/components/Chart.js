@@ -7,17 +7,21 @@ function randomColor() {
 
 const numOfData = 50;
 
+export function PrepareDiagramData(rates, data, numOfData) {
+    rates.map((rate) => {
+        var firstN_Element = Object.values(rate.history).slice(0, numOfData).reverse();
+        data.datasets.push({ label: rate.symbol, data: firstN_Element });
+    })
+}
+
 class Chart extends React.Component {
 
-    shouldComponentUpdate() {return false}
+    shouldComponentUpdate() { return false }
 
     render() {
         const data = { labels: [], datasets: [] };
 
-        this.props.rates.map((rate) => {
-            var firstN_Element = Object.values(rate.history).slice(0, numOfData).reverse();
-            data.datasets.push({ label: rate.symbol, data: firstN_Element });
-        })
+        PrepareDiagramData(this.props.rates, data,numOfData);
 
         if (this.props.rates && this.props.rates[0])
             data.labels = Object.keys(this.props.rates[0].history).slice(0, numOfData).reverse();

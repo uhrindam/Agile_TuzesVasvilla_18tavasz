@@ -1,6 +1,5 @@
 import React from "react";
 import Ionicon from "react-ionicons";
-
 import { currencies } from ".././Constants";
 
 const Tendency = (props) => (<table>
