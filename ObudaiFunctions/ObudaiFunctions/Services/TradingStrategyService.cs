@@ -63,7 +63,7 @@ namespace ObudaiFunctions.Services
             List<double> exchangeRates = createListFromHistoryDatas(exchangeRate);
             double reference = referenceExchangeValue[currency];
             double quantity = reference;
-            double historicalCorrectionRate = 0.01 * reference; //minden megelőző 5 perc változása 1%-ban érinti a vásárolt mennyiséget
+            double historicalCorrectionRate = 0.01 * reference;
 
             //azért megy exchangeRates.Count-1-ig mert az i. elemet a következővel hasonlítjuk össze
             for (int i = 0; i < exchangeRates.Count - 1; i++)
@@ -83,10 +83,9 @@ namespace ObudaiFunctions.Services
         /// <param name="exchangeRate"></param>
         private static void calculateNeweExchangeRatesAverage(string currency, double CurrentRate, double correction)
         {
-            double result = (exchangeRatesAverage[currency] * correction + CurrentRate) / 2;
             double forTheLogger = exchangeRatesAverage[currency];
-            exchangeRatesAverage[currency] = result;
-            logger.Info("The new exchange rate average of " + currency + " currency is changed from " + forTheLogger + " to " + result);
+            exchangeRatesAverage[currency] = (exchangeRatesAverage[currency] * correction + CurrentRate) / 2;
+            logger.Info("The new exchange rate average of " + currency + " currency is changed from " + forTheLogger + " to " + exchangeRatesAverage[currency]);
         }
 
         private static List<double> createListFromHistoryDatas(Dictionary<string, double> exchangeRate)
@@ -109,7 +108,7 @@ namespace ObudaiFunctions.Services
         private static bool SellStrategy(ExchangeRateDto dto, Dictionary<string, double> currencyBalances, BalanceDto balance)
         {
             if (currencyBalances[dto.Symbol] > 0 &&
-                    dto.CurrentRate * 1 + allowedDifferentePrecent > exchangeRatesAverage[dto.Symbol])
+                    dto.CurrentRate > exchangeRatesAverage[dto.Symbol] * 1 + allowedDifferentePrecent)
             {
                 double quantity = calculateQuantity(dto.Symbol, dto.History);
                 double forTheLogger = quantity;
@@ -137,7 +136,7 @@ namespace ObudaiFunctions.Services
         private static bool BuyStrategy(ExchangeRateDto dto, Dictionary<string, double> currencyBalances, BalanceDto balance)
         {
             if (balance.usd > 0
-                && dto.CurrentRate * 1 - allowedDifferentePrecent < exchangeRatesAverage[dto.Symbol])
+                && dto.CurrentRate < exchangeRatesAverage[dto.Symbol] * 1 - allowedDifferentePrecent)
             {
                 double quantity = calculateQuantity(dto.Symbol, dto.History);
                 double forTheLogger = quantity;
