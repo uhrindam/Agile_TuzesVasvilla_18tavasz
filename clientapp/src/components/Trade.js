@@ -29,7 +29,7 @@ class Trade extends React.Component {
         transaction({ Amount: this.state.amount, Symbol: this.state.symbol }, e.target.id)
             .then(() => { this.props.refreshBalance(); NotificationManager.success("Transaction succeded", 'Success'); })
             .catch(error => 
-                { NotificationManager.error( error[0] == "H" ? JSON.parse(error).Message : "Api endpoint is unreachable", 'Error') });
+                { NotificationManager.error( error ? JSON.parse(error).Message : "Api endpoint is unreachable", 'Error') });
     }
 
 

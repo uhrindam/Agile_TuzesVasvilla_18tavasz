@@ -6,6 +6,7 @@ import Trade from "./Trade";
 import Account from "./Account";
 import Tendency from "./Tendency";
 import Chart from "./Chart";
+import HistoryComponent from "./History";
 
 import WithCard from "./Card";
 import { fetchBalance, reset, getExchangeRate } from "../Services";
@@ -58,7 +59,8 @@ class CryptoTraderApp extends React.Component {
         const AccountCard = (WithCard)(Account);
         const TendencyCard = (WithCard)(Tendency);
         const ChartCard = (WithCard)(Chart);
-
+        const HistoryCard = (WithCard)(HistoryComponent)
+        
         return (
             <div>
                 <NotificationContainer />
@@ -66,9 +68,10 @@ class CryptoTraderApp extends React.Component {
                     <SideNavigation usd={this.state.balance.usd} resetBalance={this.resetBalance} />
                     <div className="main">
                         <div className="row">
-                            <AccountCard title="My Account" balance={this.state.balance} />
+                            <AccountCard title="My Account" balance={this.state.balance}  rates={this.state.rates} />
                             <TradeCard title="Trade" refreshBalance={this.getBalance} />
                             <TendencyCard title="Tendency" rates={this.state.rates} />
+                            <HistoryCard title = "My History" />
                         </div>
                         <div className="row">
                             <ChartCard title="Exchange Rate" rates={this.state.rates} />
