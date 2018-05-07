@@ -8,7 +8,7 @@ const Account = (props) => {
     sumValue += balance['usd'];
     return (
         <div>
-            <table>
+            <table className="table-common">
                 <thead>
                     <tr>
                         <td>Currency</td>
@@ -22,7 +22,6 @@ const Account = (props) => {
                                 const rate = rates == undefined ? undefined : rates.find((y) => {
                                     return (y.symbol == x.toUpperCase())
                                 });
-                                console.log(rate);
                                 if (rate) {
                                     sumValue += balance[x] * rate.currentRate;
                                 }
@@ -37,6 +36,7 @@ const Account = (props) => {
                     }
                 </tbody>
             </table>
+            <hr/>
             <h5>Sum value: {Math.round(sumValue*10000) / 10000 }$ </h5>
         </div>
     )

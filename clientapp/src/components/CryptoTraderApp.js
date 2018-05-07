@@ -16,6 +16,8 @@ import { currencies } from "../Constants";
 
 const apiTimeOut = 100;
 
+
+
 const initState = {
     balance: { usd: 0, xrp: 0, eth: 0, btc: 0 },
     rates: []
@@ -60,7 +62,7 @@ class CryptoTraderApp extends React.Component {
         const TendencyCard = (WithCard)(Tendency);
         const ChartCard = (WithCard)(Chart);
         const HistoryCard = (WithCard)(HistoryComponent)
-        
+
         return (
             <div>
                 <NotificationContainer />
@@ -68,10 +70,12 @@ class CryptoTraderApp extends React.Component {
                     <SideNavigation usd={this.state.balance.usd} resetBalance={this.resetBalance} />
                     <div className="main">
                         <div className="row">
-                            <AccountCard title="My Account" balance={this.state.balance}  rates={this.state.rates} />
+                            <AccountCard title="My Account" balance={this.state.balance} rates={this.state.rates} />
                             <TradeCard title="Trade" refreshBalance={this.getBalance} />
-                            <TendencyCard title="Tendency" rates={this.state.rates} />
-                            <HistoryCard title = "My History" />
+                        </div>
+                        <div className="row">
+                        <TendencyCard title="Tendency" rates={this.state.rates} />
+                            <HistoryCard title="My History" />
                         </div>
                         <div className="row">
                             <ChartCard title="Exchange Rate" rates={this.state.rates} />

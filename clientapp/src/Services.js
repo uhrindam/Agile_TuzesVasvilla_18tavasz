@@ -16,6 +16,14 @@ export function fetchBalance() {
     return fetch(API_URL + "account", requestOptions).then(handleResponse, handleError);
 }
 
+export function fetchHistory() {
+    const requestOptions = {
+        method: 'GET',
+        headers: authHeader()
+    };
+    return fetch(API_URL + "account/history", requestOptions).then(handleResponse, handleError);
+}
+
 export function transaction(body, type) {
     const json_content = { "Content-Type": 'application/json' };
     const requestOptions = {
