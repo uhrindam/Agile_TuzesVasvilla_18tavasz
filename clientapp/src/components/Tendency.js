@@ -13,7 +13,7 @@ const Tendency = (props) => (<table className="table-common">
     <tbody>
         {
             props.rates.map(x => {
-                var values = Object.values(x.history);
+                var values = x.history ? Object.values(x.history) : [];
                 return (
                     <tr key={x.symbol}>
                         <td>{currencies[x.symbol.toLowerCase()]}</td>

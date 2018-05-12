@@ -9,7 +9,7 @@ const numOfData = 50;
 
 export function PrepareDiagramData(rates, data, numOfData) {
     rates.map((rate) => {
-        var firstN_Element = Object.values(rate.history).slice(0, numOfData).reverse();
+        var firstN_Element = rate.history ?  Object.values(rate.history).slice(0, numOfData).reverse():[];
         data.datasets.push({ label: rate.symbol, data: firstN_Element });
     })
 }
