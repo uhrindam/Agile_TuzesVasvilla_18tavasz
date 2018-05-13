@@ -1,6 +1,5 @@
 import React from "react";
 import { currencies } from '../Constants'
-import { fetchHistory } from "../Services";
 import moment from "moment";
 
 const itemsPerPage = 5;
@@ -8,23 +7,11 @@ const itemsPerPage = 5;
 class History extends React.Component {
 
     state = {
-        history: [],
         pageIdx: 0,
-        numOfEntries: 0
     }
-
-    componentDidMount() {
-        this.getBalance();
-    }
-
-    getBalance = () => {
-        fetchHistory().then(
-            history => { this.setState({ history: history.reverse(), numOfEntries: history.length }) })
-            .catch(error => { NotificationManager.error(error, 'Error'); });
-    };
 
     next = () => {
-        if (this.state.pageIdx + itemsPerPage < this.state.numOfEntries) {
+        if (this.state.pageIdx + itemsPerPage < this.props.numOfEntries) {
             this.setState((prevState) => ({ pageIdx: prevState.pageIdx + itemsPerPage }))
         }
     }
@@ -50,7 +37,7 @@ class History extends React.Component {
                     </thead>
                     <tbody>
                         {
-                            this.state.history.slice(this.state.pageIdx, this.state.pageIdx + itemsPerPage).map((h, index) =>
+                            this.props.history.slice(this.state.pageIdx, this.state.pageIdx + itemsPerPage).map((h, index) =>
                                 (<tr key={h.createdAt}>
                                     <td>{index + 1+this.state.pageIdx}</td>
                                     <td>{!h.symbol ? "-" : currencies[h.symbol.toLowerCase()]}</td>
@@ -63,7 +50,7 @@ class History extends React.Component {
                     </tbody>
                 </table>
                 <hr />
-                {(this.state.pageIdx / itemsPerPage)+1} / { Math.ceil((this.state.numOfEntries / itemsPerPage))}
+                {(this.state.pageIdx / itemsPerPage)+1} / { Math.ceil((this.props.numOfEntries / itemsPerPage))}
                 <div className="flex-center">
                     <div>
                         <button id="Previous" onClick={this.previous} type="button" className="btn btn-info">Previous</button>
